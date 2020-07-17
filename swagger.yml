@@ -48,6 +48,11 @@ paths:
       summary: Recommend an activity
       description: Recommend an activity
       parameters:
+        - name: day
+          in: query
+          description: Day of the week to perform the activity
+          type: string
+          required: True
         - name: time
           in: query
           description: Time interval of the available to perform the activity
