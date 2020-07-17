@@ -6,25 +6,25 @@ from model import Category, Location, District, Activity, OpeningHour
 
 
 def _get_item_by_name(cls, name):
-    if name is not None:
+    if name:
         try:
-            return cls.get(cls.name == name)
+            return cls.get(cls.name == name.lower())
         except cls.DoesNotExist:
             return None
     return None
 
 
 def query(**kwargs):
-    category = _get_item_by_name(Category, kwargs.get('category', None))
-    location = _get_item_by_name(Location, kwargs.get('location', None))
-    district = _get_item_by_name(District, kwargs.get('district', None))
-
     q = Activity.select()
-    if category:
+
+    if 'category' in kwargs:
+        category = _get_item_by_name(Category, kwargs.get('category', None))
         q = q.where(Activity.category == category)
-    if location:
+    if 'location' in kwargs:
+        location = _get_item_by_name(Location, kwargs.get('location', None))
         q = q.where(Activity.location == location)
-    if district:
+    if 'district' in kwargs:
+        district = _get_item_by_name(District, kwargs.get('district', None))
         q = q.where(Activity.district == district)
 
     return {
