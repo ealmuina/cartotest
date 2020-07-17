@@ -1,12 +1,10 @@
-from flask import Flask
+import connexion
 
-app = Flask(__name__)
+# Create the application instance
+app = connexion.App(__name__, specification_dir='./')
 
-
-@app.route('/')
-def hello_world():
-    return 'Hello World!'
-
+# Read the swagger.yml file to configure the endpoints
+app.add_api('swagger.yml')
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0', port=5000, debug=True)

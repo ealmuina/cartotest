@@ -1,0 +1,67 @@
+swagger: "2.0"
+info:
+  description: This is the swagger file that goes with our server code
+  version: "1.0.0"
+  title: Swagger REST Article
+consumes:
+  - application/json
+produces:
+  - application/json
+
+basePath: /api
+
+# Paths supported by the server application
+paths:
+  /activities:
+    get:
+      operationId: activity.query
+      tags:
+        - Activity
+      summary: Check available activities
+      description: Check available activities
+      parameters:
+        - name: category
+          in: query
+          description: Category of the activity
+          type: string
+          required: False
+        - name: location
+          in: query
+          description: Location of the activity
+          type: string
+          required: False
+        - name: district
+          in: query
+          description: District of the activity
+          type: string
+          required: False
+      responses:
+        200:
+          description: Available activities that meet the stated conditions
+          schema:
+            type: array
+  /recommend:
+    get:
+      operationId: activity.recommend
+      tags:
+        - Activity
+      summary: Recommend an activity
+      description: Recommend an activity
+      parameters:
+        - name: time
+          in: query
+          description: Time interval of the available to perform the activity
+          type: string
+          required: True
+        - name: category
+          in: query
+          description: Preferred category
+          type: string
+          required: True
+      responses:
+        200:
+          description: Recommended activity
+          schema:
+            type: object
+        404:
+          description: No activity found that meet the stated conditions
