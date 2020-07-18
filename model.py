@@ -45,7 +45,7 @@ class Activity(Model):
         result = {}
         for day in ['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su']:
             intervals = []
-            for oh in self.opening_hours.where(OpeningHour.day == day).order_by(OpeningHour.start):
+            for oh in self.opening_hours.where(OpeningInterval.day == day).order_by(OpeningInterval.start):
                 intervals.append(f'{oh.start}-{oh.end}')
             result[day] = intervals
         return result
@@ -72,7 +72,7 @@ class Activity(Model):
         database = db
 
 
-class OpeningHour(Model):
+class OpeningInterval(Model):
     activity = ForeignKeyField(Activity, backref='opening_hours')
     day = CharField()
     start = TimeField()

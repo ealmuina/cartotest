@@ -4,7 +4,7 @@ from model import *
 
 
 def create_tables():
-    db.create_tables([Category, Location, City, District, Activity, OpeningHour])
+    db.create_tables([Category, Location, City, District, Activity, OpeningInterval])
 
 
 def populate(city, file_path):
@@ -34,7 +34,7 @@ def populate(city, file_path):
             for day in ['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su']:
                 for interval in act['opening_hours'][day]:
                     start, end = interval.split('-')
-                    OpeningHour.create(
+                    OpeningInterval.create(
                         activity=activity,
                         day=day,
                         start=start,
