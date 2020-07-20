@@ -35,9 +35,24 @@ Summing up, these entities and relationships can be represented as:
 
 According to the problem statement, two calls have been defined and implemented:
 
-* `/api/activities`:
+* `/api/activities`: Receives three optional parameters: `category`, `location` and `district`, indicating the filtering criteria. This call returns a list with the activities matching the specified requirements. If no parameters are received, it will list all the activities, and in case there is no match, the value returned will be an empty list.
 
-* `/api/recommend`:
+* `/api/recommend`: Receives three parameters `day`, `time` and `category`, indicating the day of the week, the time frame (`10:00-12:00` for example), and the category of the activity respectively. This call returns either an activity according to the problem statement, or a HTTP response with code 404 in case no activity can be recommended according to the parameters defined.
+
+In both calls the activities are defined using the GeoJSON format, as the statement indicates. A property named `geojson` has been implemented in the Activity class, in order to map them to that format.
+
+The API behaviour has been implemented in the file *activity.py*. as mentioned before. Two functions: `query` and `recommend` manage respectively each call.
+
+The `query' function is very simple when using peewee as ORM, since it does not execute a query to the database until its objects are directly accessed (indexing or by a loop, for instance). The method starts creating a query for all the activities. Then, it checks if each of the parameters has been included, in which case, adds a corresponding *WHERE* clause to the query. Finally, the method returns a GeoJSON object of type *FeatureCollection*, whose features are the list of activities matching the query, mapped to GeoJSON.
+
+The function `recommed` is a bit more complicated, since it has to deal with time frames. Anyway, it just a question of declaring the right SQL query and letting it do the job. First, the function parses the parameters, splitting the time frame into `start` and `end` time objects, and getting the Category object. Then, we need to make a *JOIN* between the tables *Activity* and *OpeningInterval*, in order to check the opening times of the activities. The activities need to have the indicated category, and the opening intervals need to be for the indicated day, so we add those conditions to the query.
+
+Here is where the harder part begins. We have to indicate that the activities must be able to be completed in the given time frame. We can split the cases where this is possible in two:
+
+* The activity opens before the user's time frame starts: Here the user would start their visit when their interval starts, so there has to be enough time for them to complete it (according to its average time spent), before the activity closes and before the user's time frame ends. Both conditions have to be met.
+* The user's time frame starts before the activity opening: The user has to wait until the activity opens, and then their visit begins. There has to be enough time to complete it before the user's time frame ends. In this case there is no need to check if there is enough time before the activity closes, since in this case the visit is starting right at the moment the activity opens.
+
+Finally, according to the problem statement, in case there is more than one possibility, the activity with the longest visit time has to be returned, so we order the query results decreasingly, and return the first item. If the query result was empty, the function returns the HTTP code 404, as indicated before.
 
 ### Installation
 
