@@ -2,7 +2,56 @@
 
 ## First part
 
-TODO
+1 - 
+
+Hello, this is a PostGIS query. In a nutshell, it is getting the european countries, their population and number of populated places from the database. 
+
+To do it, the query uses two tables: *european_countries* and *populated_places*, that are joined based on the function `ST_Intersects` applied to their geometries. This function returns true if them share any portion of space, which means, the query is joining the countries with the populated places located in them. The results of the *JOIN* are grouped by the country name. The query returns those names, the number of rows each group had, which will correspond with the number of places, and the sum of the populations of the places; that last value would indicate the total population of the country. 
+
+I hope I have been able to answer your question. If you have any other questions do not hesitate to ask. 
+
+Kind regards.
+
+2 -
+
+Hello, the problem is in this query:
+
+```
+SELECT cartodb_id, the_geom, the_geom_webmercator,
+FROM ne_10m_populated_places_simple
+WHERE ST_intersects(
+  the_geom,
+  ST_Buffer(
+    ST_SetSRID(ST_Point(${lng},${lat}),4326)::geography,
+    ${radius})::geometry
+  )
+```
+
+Right after `the_geom_webmercator` there is a comma (`,`) which should not be there, since `the_geom_webmercator` is the last field of the query. That was causing an error when parsing the query, just remove it and your code should work fine.
+
+There is another issue I have noticed. I do not know if it is something unwanted or not, so I am just pointing it out in case it is. Every time you draw a new circle, the old one is kept on the map. If you want it to be removed, and always show only one circle, just store the old layer in a variable, and remove it from the map when a new one is added. The needed code would be like this:
+
+```
+...
+// initialise the draw controls
+map.addControl(drawControl);
+let oldLayer = null;
+
+// get radius and center of drawn circle and change source of the CARTO layer
+map.on(L.Draw.Event.CREATED, function (e) {
+    if (oldLayer != null)
+        map.removeLayer(oldLayer);
+    let layer = e.layer;
+    oldLayer = layer;
+    map.addLayer(layer);
+...
+```
+
+You can see the variable `oldLayer` that I mentioned, used to store the previous circle and remove it when adding a new one.
+
+I hope I have been able to help you. If you have any other questions do not hesitate to contact me again.
+
+Kind regards.
 
 ## Second part
 
