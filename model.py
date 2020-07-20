@@ -2,6 +2,8 @@ from peewee import *
 
 db = SqliteDatabase('cartotest.db')
 
+WEEK_DAYS = ['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su']
+
 
 class Category(Model):
     name = CharField()
@@ -19,6 +21,7 @@ class Location(Model):
 
 class City(Model):
     name = CharField()
+    timezone = CharField()
 
     class Meta:
         database = db
@@ -43,7 +46,7 @@ class Activity(Model):
 
     def _get_opening_hours_json(self):
         result = {}
-        for day in ['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su']:
+        for day in WEEK_DAYS:
             intervals = []
             for oh in self.opening_hours.where(OpeningInterval.day == day).order_by(OpeningInterval.start):
                 intervals.append(f'{oh.start}-{oh.end}')

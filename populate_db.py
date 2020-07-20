@@ -7,8 +7,11 @@ def create_tables():
     db.create_tables([Category, Location, City, District, Activity, OpeningInterval])
 
 
-def populate(city, file_path):
-    city = City.create(name=city)
+def populate(city, timezone, file_path):
+    city = City.create(
+        name=city,
+        timezone=timezone
+    )
 
     with open(file_path) as file:
         activities = json.load(file)
@@ -44,4 +47,4 @@ def populate(city, file_path):
 
 if __name__ == '__main__':
     create_tables()
-    populate('madrid', 'madrid.json')
+    populate('madrid', 'Europe/Madrid', 'madrid.json')

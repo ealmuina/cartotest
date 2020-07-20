@@ -1,8 +1,9 @@
 import datetime
 
+import pytz
 from flask import abort
 
-from model import Category, Location, District, Activity, OpeningInterval
+from model import Category, Location, District, Activity, OpeningInterval, WEEK_DAYS
 
 
 def _get_item_by_name(cls, name):
@@ -39,7 +40,9 @@ def query(**kwargs):
     }
 
 
-def recommend(day, time, category):
+def recommend(time, category):
+    day = datetime.datetime.now(pytz.timezone('Europe/Madrid'))  # TODO Get the specific city timezone
+    day = WEEK_DAYS[day.weekday()]
     start, end = map(
         lambda x: datetime.datetime.strptime(x, '%H:%M').time(),
         time.split('-')
