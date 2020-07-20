@@ -55,6 +55,49 @@ Kind regards.
 
 ## Second part
 
+### Installation
+
+In order to execute the application, you just need to have Python 3.7 installed in your machine (any version from 3.6 should work fine, but only 3.7 has been tested). 
+
+You might also need the *virtualenv* module, in case you do not have it already. In that case, you can easily install it using your package manager in Linux (Python for Windows already includes it). For instance, for Ubuntu the installation command for *virtualenv* will be:
+
+```bash
+sudo apt install virtualenv
+```
+
+Next, just configure a virtualenv for the application, activate it and install the requirements indicated in the file *requirements.txt*. You just have to execute the following commands:
+
+```bash
+virtualenv -p python3 venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+Finally, in order to populate the database with the content of *madrid.json*, run the script *populate_db.py*:
+
+```bash
+python populate_db.py
+```
+
+### Running
+
+In order to run the application, just execute te following commands:
+
+```bash
+source venv/bin/activate
+python app.py
+```
+
+This will run the API in the port 5000 by default. If you need to use a different port, just add it as a parameter when running the script. For instance, in order to run it bound to the port 8000, use this command:
+
+```bash
+python app.py 8000
+```
+
+If everything is correct. The application should be up and running. You can find a live version running at this address as well: http://18.130.227.246:5000.
+
+### Description
+
 Since the volume of data in *madrid.json* is small, it would have been possible to just parse it and load its content in memory every time the application is executed. But that does not mean it is the right approach. When the number of json files and their size increase, parsing them becomes slower and consumes more memory. 
 
 In order to build a system that scales up well, and that can store a large volume of cities and activities, it would be better to use a database and load the information from *madrid.json* just once.
@@ -102,44 +145,3 @@ Here is where the harder part begins. We have to indicate that the activities mu
 * The user's time frame starts before the activity opening: The user has to wait until the activity opens, and then their visit begins. There has to be enough time to complete it before the user's time frame ends. In this case there is no need to check if there is enough time before the activity closes, since in this case the visit is starting right at the moment the activity opens.
 
 Finally, according to the problem statement, in case there is more than one possibility, the activity with the longest visit time has to be returned, so we order the query results decreasingly, and return the first item. If the query result was empty, the function returns the HTTP code 404, as indicated before.
-
-### Installation
-
-In order to execute the application, you just need to have Python 3.7 installed in your machine (any version from 3.6 should work fine, but only 3.7 has been tested). 
-
-You might also need the *virtualenv* module, in case you do not have it already. In that case, you can easily install it using your package manager in Linux (Python for Windows already includes it). For instance, for Ubuntu the installation command for *virtualenv* will be:
-
-```bash
-sudo apt install virtualenv
-```
-
-Next, just configure a virtualenv for the application, activate it and install the requirements indicated in the file *requirements.txt*. You just have to execute the following commands:
-
-```bash
-virtualenv -p python3 venv
-source venv/bin/activate
-pip install -r requirements.txt
-```
-
-Finally, in order to populate the database with the content of *madrid.json*, run the script *populate_db.py*:
-
-```bash
-python populate_db.py
-```
-
-## Running
-
-In order to run the application, just execute te following commands:
-
-```bash
-source venv/bin/activate
-python app.py
-```
-
-This will run the API in the port 5000 by default. If you need to use a different port, just add it as a parameter when running the script. For instance, in order to run it bound to the port 8000, use this command:
-
-```bash
-python app.py 8000
-```
-
-If everything is correct. The application should be up and running. You can find a live version running at this address as well: http://18.130.227.246:5000.
