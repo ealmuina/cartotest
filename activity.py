@@ -46,25 +46,32 @@ def recommend(day, time, category):
     )
     category = _get_item_by_name(Category, category)
 
+    # User's interval bounds expressed in hours
+    user_start_hour = start.hour + start.minute / 60
+    user_end_hour = end.hour + end.minute / 60
+
+    # Activities opening intervals bounds expressed in hours
+    activity_start_hour = OpeningInterval.start.hour + OpeningInterval.start.minute / 60
+    activity_end_hour = OpeningInterval.end.hour + OpeningInterval.end.minute / 60
+
     q = Activity.select().join(OpeningInterval).where(
         (Activity.category == category) &
         (OpeningInterval.day == day) &
         # There's enough time to make the visit before it closes
         (
                 (
-                    # Interval starts after the activity has opened and there's enough time before the activity ends
+                    # Activity start <= user interval start
                         (OpeningInterval.start <= start) &
-                        (start.hour + start.minute / 60 + Activity.hours_spent <=
-                         OpeningInterval.end.hour + OpeningInterval.end.minute / 60)
+                        (user_start_hour + Activity.hours_spent <= activity_end_hour) &
+                        (user_start_hour + Activity.hours_spent <= user_end_hour)
                 ) |
                 (
-                    # Activity opens after the free interval's start and there's enough time before the interval ends
+                    # Activity start >= user interval start
                         (OpeningInterval.start >= start) &
-                        (OpeningInterval.start.hour + OpeningInterval.start.minute / 60 + Activity.hours_spent <=
-                         end.hour + end.minute / 60)
+                        (activity_start_hour + Activity.hours_spent <= user_end_hour)
                 )
         )
-    ).distinct().order_by(Activity.hours_spent.desc())
+    ).order_by(Activity.hours_spent.desc())
 
     if q.exists():
         return q[0].geojson
