@@ -41,13 +41,16 @@ def query(**kwargs):
 
 
 def recommend(time, category):
-    day = datetime.datetime.now(pytz.timezone('Europe/Madrid'))  # TODO Get the specific city timezone
-    day = WEEK_DAYS[day.weekday()]
     start, end = map(
         lambda x: datetime.datetime.strptime(x, '%H:%M').time(),
         time.split('-')
     )
     category = _get_item_by_name(Category, category)
+
+    # Get the day of the week. Now it is fixed to the timezone Europe/Madrid, but if the city was passed
+    # it could be calculated for it, loading its timezone from the database.
+    day = datetime.datetime.now(pytz.timezone('Europe/Madrid'))
+    day = WEEK_DAYS[day.weekday()]
 
     # User's interval bounds expressed in hours
     user_start_hour = start.hour + start.minute / 60

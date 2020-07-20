@@ -148,3 +148,24 @@ Finally, according to the problem statement, in case there is more than one poss
 
 ### Additional questions
 
+In order to extend the program with the first two questions, it would be necessary to get the user's city in the call somehow. The simplest way would be to directly send it as another parameter.
+ 
+Then we could call a weather API (for example https://openweathermap.org/current) and check if it is currently raining in that city. The API responds to queries made to `api.openweathermap.org/data/2.5/weather?q={city name}&appid={your api key}`, with an object that has a field `weather`, which is a list of objects, describing its current weather conditions. Those objects have a property `main`, which is the type of condition, and in case it is raining, one of them will have `"Rain"` as value.
+ 
+ If it is raining, we would add a condition to exclude outdoor activities, for instance, starting from this query before adding the remaining conditions:
+
+```python
+    outdoors = Location.get(Location.name == 'outdoors')
+    q = Activity.select().where(Activity.location != outdoors)
+```
+
+The inclusion of multiple cities in the program has been already taken into account, and would be easy to incorporate, adding the corresponding query to the database, which would look like this:
+
+```python
+city = City.get(City.name == city) # the city name must be passed as a parameter to the query
+q = Activity.select().join(District).where(
+    District.city == city
+)
+```
+
+Regarding extending the recommendation API to fill the given time frame with multiple activities, we already have at the end of the call a list of activities that can be executed within it. First, we need to define a criterion to choose the activities; it could be, for instance, to maximize the number of activities, or the total time spent on them. Once the criterion is defined, the easy solution would be to apply brute force to solve the underlying combinatorial problem, which is to schedule activities that have a start time (cannot be started earlier than that), a duration, and a due time. Testing all the combinations and returning the better one would work well depending on the number of possibilities. If there are too many, maybe we could apply a heuristic, which might not always give the optimum solution, but a fair-enough one. Examples of heuristics are: to choose always the activity that starts first, or that with the longest duration, and keep adding activities until no other can be scheduled.
