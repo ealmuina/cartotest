@@ -2,7 +2,7 @@
 
 ## First part
 
-1 - 
+__1 -__ 
 
 Hello, this is a PostGIS query. In a nutshell, it is getting the european countries, their population and number of populated places from the database. 
 
@@ -12,7 +12,7 @@ I hope I have been able to answer your question. If you have any other questions
 
 Kind regards.
 
-2 -
+__2 -__
 
 Hello, the problem is in this query:
 
