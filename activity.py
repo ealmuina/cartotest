@@ -6,6 +6,12 @@ from model import Category, Location, District, Activity, OpeningInterval
 
 
 def _get_item_by_name(cls, name):
+    """
+    Gets the item from the corresponding class with the indicated name.
+    :param cls: Class / Entity of the item.
+    :param name: Case-insensitive name of the item.
+    :return: The item if there is a match, None otherwise.
+    """
     if name:
         try:
             return cls.get(cls.name == name.lower())
@@ -35,12 +41,9 @@ def query(**kwargs):
 
 def recommend(day, time, category):
     start, end = map(
-        lambda x: datetime.datetime.strptime(x, '%H:%M'),
+        lambda x: datetime.datetime.strptime(x, '%H:%M').time(),
         time.split('-')
     )
-    available_time = (start - end).total_seconds() / 3600
-    start = start.time()
-    end = end.time()
     category = _get_item_by_name(Category, category)
 
     q = Activity.select().join(OpeningInterval).where(
