@@ -94,7 +94,7 @@ This will run the API in the port 5000 by default. If you need to use a differen
 python app.py 8000
 ```
 
-If everything is correct. The application should be up and running. You can find a live version running at this address as well: http://18.130.227.246:5000.
+If everything is correct. The application should be up and running. ~~You can find a live version running at this address as well: http://18.130.227.246:5000.~~
 
 ### Description
 
